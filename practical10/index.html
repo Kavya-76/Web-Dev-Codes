@@ -1,23 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Calendar</title>
-    <style>
-        table { border-collapse: collapse; }
-        td, th { border: 1px solid black; padding: 10px; text-align: center; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    select {
+      padding: 5px;
+      margin: 10px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 60%;
+    }
+    th, td {
+      border: 1px solid #444;
+      padding: 10px;
+      width: 14.2%; /* 100% / 7 days */
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    td.empty {
+      background-color: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
-    <label for="month">Month:</label>
-    <select id="month"></select>
-    
-    <label for="year">Year:</label>
-    <select id="year"></select>
+  <h2>Calendar Viewer</h2>
 
-    <div id="calendar"></div>
+  <label for="month">Select Month:</label>
+  <select id="month"></select>
 
-    <script src="./script.js" />
+  <label for="year">Select Year:</label>
+  <select id="year"></select>
+
+  <div id="calendar"></div>
+
+  <script>
+    const monthSelect = document.getElementById('month')    ;
+    const yearSelect = document.getElementById('year');
+    const calendarDiv = document.getElementById('calendar');
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    // Populate months
+    monthNames.forEach((month, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = month;
+      monthSelect.appendChild(option);
+    });
+
+    // Populate years (from 1980 to 2050)
+    for (let y = 1980; y <= 2050; y++) {
+      const option = document.createElement('option');
+      option.value = y;
+      option.textContent = y;
+      yearSelect.appendChild(option);
+    }
+
+    // Set current date as default
+    const today = new Date();
+    monthSelect.value = today.getMonth();
+    yearSelect.value = today.getFullYear();
+
+    // Event listeners
+    monthSelect.addEventListener('change', generateCalendar);
+    yearSelect.addEventListener('change', generateCalendar);
+
+    function generateCalendar() {
+      const month = parseInt(monthSelect.value);
+      const year = parseInt(yearSelect.value);
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let calendarHTML = "<table>";
+      calendarHTML += `<tr><th colspan="7">${monthNames[month]} ${year}</th></tr>`;
+      calendarHTML += "<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>" +
+                      "<th>Thu</th><th>Fri</th><th>Sat</th></tr><tr>";
+
+      // Empty cells before first day
+      for (let i = 0; i < firstDay; i++) {
+        calendarHTML += "<td class='empty'></td>";
+      }
+
+      // Days of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        calendarHTML += `<td>${day}</td>`;
+        if ((firstDay + day) % 7 === 0) {
+          calendarHTML += "</tr><tr>";
+        }
+      }
+
+      // Empty cells after last day
+      const totalCells = firstDay + daysInMonth;
+      if (totalCells % 7 !== 0) {
+        for (let i = 0; i < 7 - (totalCells % 7); i++) {
+          calendarHTML += "<td class='empty'></td>";
+        }
+      }
+
+      calendarHTML += "</tr></table>";
+      calendarDiv.innerHTML = calendarHTML;
+    }
+
+    // Generate calendar on page load
+    generateCalendar();
+  </script>
 </body>
 </html>
