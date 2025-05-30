@@ -2,7 +2,7 @@
 
 <?php
 
-$filename = "../files/file1.txt";
+$filename = "../../files/file1.txt";
 $content = "This is file1.\nContent is written using php";
 $file = fopen($filename, "w");
 

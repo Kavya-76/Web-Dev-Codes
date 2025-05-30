@@ -2,7 +2,7 @@
 
 <?php
 
-$filename = "../files/file1.txt";
+$filename = "../../files/file1.txt";
 $file = fopen($filename, "r");
 
 if($file) {
